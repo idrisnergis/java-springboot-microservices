@@ -2,6 +2,7 @@ package com.idrisnergis.microservice.patientservice.service;
 
 import com.idrisnergis.microservice.patientservice.dto.PatientRequestDTO;
 import com.idrisnergis.microservice.patientservice.dto.PatientResponseDTO;
+import com.idrisnergis.microservice.patientservice.exception.EmailAlreadyExistsException;
 import com.idrisnergis.microservice.patientservice.mapper.PatientMapper;
 import com.idrisnergis.microservice.patientservice.model.Patient;
 import com.idrisnergis.microservice.patientservice.repository.PatientRepository;
@@ -26,9 +27,13 @@ public class PatientService {
 
     public PatientResponseDTO createPatient(PatientRequestDTO patientRequestDTO){
         try{
+            if (patientRepository.existsByEmail(patientRequestDTO.getEmail()))
+                throw new EmailAlreadyExistsException("A patient with this email " + " already exists " + patientRequestDTO.getEmail());
+
             Patient addPatient = patientRepository.save(PatientMapper.toModel(patientRequestDTO));
             return PatientMapper.toDto(addPatient);
-        }catch (Exception ex){
+        }
+        catch (Exception ex){
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "An error occurred while saving the patient", ex);
         }
 

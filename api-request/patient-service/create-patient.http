@@ -1,9 +1,9 @@
-POST http://localhost:8080/patients
+POST http://localhost:4000/patients
 Content-Type: application/json
 
 {
   "name": "Idris Nergis",
-  "email": "idristest@gmail.com",
+  "email": "idris@test.com",
   "address": "123 İstanbul",
   "dateOfBirth": "1900-01-01",
   "registeredDate": "2025-07-22"
