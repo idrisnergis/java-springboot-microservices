@@ -6,7 +6,6 @@ import com.idrisnergis.microservice.patientservice.dto.validators.CreatePatientV
 import com.idrisnergis.microservice.patientservice.service.PatientService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
 import jakarta.validation.groups.Default;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
