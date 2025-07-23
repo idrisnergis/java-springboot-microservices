@@ -64,4 +64,12 @@ public class PatientService {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "An error occurred while update the patient", ex);
         }
     }
+
+    public void deletePatient(UUID id) {
+        try {
+            patientRepository.deleteById(id);
+        }catch (Exception ex){
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "An error occurred while delete the patient", ex);
+        }
+    }
 }
