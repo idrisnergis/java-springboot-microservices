@@ -5,6 +5,7 @@ import com.idrisnergis.microservice.patientservice.dto.PatientResponseDTO;
 import com.idrisnergis.microservice.patientservice.exception.EmailAlreadyExistsException;
 import com.idrisnergis.microservice.patientservice.exception.PatientNotFoundException;
 import com.idrisnergis.microservice.patientservice.grpc.BillingServiceGrpcClient;
+import com.idrisnergis.microservice.patientservice.kafka.KafkaProducer;
 import com.idrisnergis.microservice.patientservice.mapper.PatientMapper;
 import com.idrisnergis.microservice.patientservice.model.Patient;
 import com.idrisnergis.microservice.patientservice.repository.PatientRepository;
@@ -23,6 +24,7 @@ public class PatientService {
 
     private final PatientRepository patientRepository;
     private final BillingServiceGrpcClient billingServiceGrpcClient;
+    private final KafkaProducer kafkaProducer;
 
     public List<PatientResponseDTO> getPatients() {
         List<Patient> patients = patientRepository.findAll();
@@ -38,6 +40,8 @@ public class PatientService {
             Patient addPatient = patientRepository.save(PatientMapper.toModel(patientRequestDTO));
 
             billingServiceGrpcClient.createBillingAccount(addPatient.getId().toString(),addPatient.getName(), addPatient.getEmail());
+
+            kafkaProducer.sendEvent(addPatient);
 
             return PatientMapper.toDto(addPatient);
         }
