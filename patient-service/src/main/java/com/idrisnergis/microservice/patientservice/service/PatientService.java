@@ -4,6 +4,7 @@ import com.idrisnergis.microservice.patientservice.dto.PatientRequestDTO;
 import com.idrisnergis.microservice.patientservice.dto.PatientResponseDTO;
 import com.idrisnergis.microservice.patientservice.exception.EmailAlreadyExistsException;
 import com.idrisnergis.microservice.patientservice.exception.PatientNotFoundException;
+import com.idrisnergis.microservice.patientservice.grpc.BillingServiceGrpcClient;
 import com.idrisnergis.microservice.patientservice.mapper.PatientMapper;
 import com.idrisnergis.microservice.patientservice.model.Patient;
 import com.idrisnergis.microservice.patientservice.repository.PatientRepository;
@@ -21,6 +22,7 @@ import java.util.UUID;
 public class PatientService {
 
     private final PatientRepository patientRepository;
+    private final BillingServiceGrpcClient billingServiceGrpcClient;
 
     public List<PatientResponseDTO> getPatients() {
         List<Patient> patients = patientRepository.findAll();
@@ -34,6 +36,9 @@ public class PatientService {
                 throw new EmailAlreadyExistsException("A patient with this email " + " already exists " + patientRequestDTO.getEmail());
 
             Patient addPatient = patientRepository.save(PatientMapper.toModel(patientRequestDTO));
+
+            billingServiceGrpcClient.createBillingAccount(addPatient.getId().toString(),addPatient.getName(), addPatient.getEmail());
+
             return PatientMapper.toDto(addPatient);
         }
         catch (Exception ex){
